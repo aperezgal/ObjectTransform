@@ -13,6 +13,12 @@ var controls;
 
 controls = new OBJECT_TRANSFORM.ObjectTransform(document.getElementById( 'banner' ),
     document.getElementById( 'mainContainer' ));
-
-controls.check();
+controls.widthObj = 992;
+controls.heightObj = 486;
+controls.imageWidth = 150;
+controls.imageHeight = 250;
+controls.xPos = 300;
+controls.yPos = 100;
+controls.imageSource = "assets/banner1.jpg";
+controls.initialize();
 

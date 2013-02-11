@@ -5,17 +5,155 @@
     <title>Object Transform</title>
     <link rel="stylesheet" href="css/styles.css"/>
 
+	<style> 
+      canvas { margin: 3px; border: 1px dashed red; }
+      .reception { position:relative; background-image: url("assets/zona2.jpg"); margin:0 5px;}
+    </style> 
+
+
 </head>
+
+<script>
+
+	window.onload = function(){
+		console.log('hello');
+
+
+	var canvas = document.getElementById("imgContainer");
+	var ctx = canvas.getContext('2d');
+	
+	var canvas1 = document.createElement('canvas');
+	canvas1.width = canvas.width;
+	canvas1.height = canvas.height;
+	var ctx1 = canvas1.getContext('2d');
+	
+	var canvas2 = document.createElement('canvas');
+	canvas2.width = canvas.width;
+	canvas2.height = canvas.height;
+	var ctx2 = canvas2.getContext('2d');
+	
+
+	var op = null;
+	var points = [[50, 50], [550, 100], [300, 400], [100, 400]];
+	// img要素
+	var img = new Image();
+	img.src = 'assets/banner1.jpg';
+	img.onload = function() {
+		op = new html5jp.perspective(ctx1, img);
+		op.draw(points);
+		//prepare_lines(ctx2, points);
+		draw_canvas(ctx, ctx1, ctx2);
+	};
+
+
+		var drag = null;
+		canvas.addEventListener("mousedown", function(event) {
+			event.preventDefault();
+			var p = get_mouse_position(event);
+			for( var i=0; i<4; i++ ) {
+				var x = points[i][0];
+				var y = points[i][1];
+				if( p.x < x + 10 && p.x > x - 10 && p.y < y + 10 && p.y > y - 10 ) {
+					drag = i;
+					break;
+				}
+			}
+		}, false);
+
+		canvas.addEventListener("mousemove", function(event) {
+			event.preventDefault();
+			if(drag == null) { return; }
+			var p = get_mouse_position(event);
+			points[drag][0] = p.x;
+			points[drag][1] = p.y;
+			prepare_lines(ctx2, points, true);
+			draw_canvas(ctx, ctx1, ctx2);
+		}, false);
+
+		canvas.addEventListener("mouseup", function(event) {
+			event.preventDefault();
+			if(drag == null) { return; }
+			var p = get_mouse_position(event);
+			points[drag][0] = p.x;
+			points[drag][1] = p.y;
+			ctx.clearRect(0, 0, canvas.width, canvas.height);
+			ctx1.clearRect(0, 0, canvas.width, canvas.height);
+			var s = (new Date()).getTime();
+			op.draw(points);
+			//document.getElementById("ms").innerHTML = ( (new Date()).getTime() - s );
+			prepare_lines(ctx2, points);
+			draw_canvas(ctx, ctx1, ctx2);
+			drag = null;
+		}, false);
+
+
+		canvas.addEventListener("mouseout", function(event) {
+			event.preventDefault();
+			drag = null;
+		}, false);
+
+		canvas.addEventListener("mouseenter", function(event) {
+			event.preventDefault();
+			drag = null;
+		}, false);
+
+
+
+	function prepare_lines(ctx, p, with_line) {
+		ctx.save();
+		//ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+		ctx.clearRect(0, 0, 992, 395);
+		//
+		if( with_line == true ) {
+			ctx.beginPath();
+			ctx.moveTo(p[0][0], p[0][1]);
+			for( var i=1; i<4; i++ ) {
+				ctx.lineTo(p[i][0], p[i][1]);
+			}
+			ctx.closePath();
+			ctx.strokeStyle = "blue";
+			ctx.stroke();
+		}
+		//
+		ctx.fillStyle = "blue";
+		for( var i=0; i<4; i++ ) {
+			ctx.beginPath();
+			ctx.arc(p[i][0], p[i][1], 4, 0, Math.PI*2, true);
+			ctx.fill();
+		}
+		//
+		ctx.restore();
+	}
+
+	function draw_canvas(ctx, ctx1, ctx2) {
+		ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+		ctx.drawImage(ctx1.canvas, 0, 0);
+		ctx.drawImage(ctx2.canvas, 0, 0);
+	}
+
+	function get_mouse_position(event) {
+		var rect = event.target.getBoundingClientRect() ;
+		return {
+			x: event.clientX - rect.left,
+			y: event.clientY - rect.top
+		};
+	}
+    }
+
+</script>
 
 <body>
 
-
-    <div id="mainContainer">
-        <img id="banner" src="assets/banner1.jpg" alt="banner"/>
+	<div id="mainContainer" style="position: absolute" class="reception">
+		
+		<canvas id="imgContainer" width="992" height="395" style="z-index: 0;">	
+	    </canvas>
+   
     </div>
 
-    <script src="scripts/ObjectTransform.js"></script>
-    <script src="scripts/main.js"></script>
+
+    <script src="scripts/perspective.js"></script>
+
 
 </body>
 

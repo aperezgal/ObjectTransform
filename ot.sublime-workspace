@@ -1,0 +1,231 @@
+{
+	"auto_complete":
+	{
+		"selected_items":
+		[
+			[
+				"mov",
+				"moveLeft"
+			],
+			[
+				"move",
+				"moveForward"
+			],
+			[
+				"model",
+				"modelname"
+			],
+			[
+				"limX",
+				"limXSup"
+			],
+			[
+				"tar",
+				"targetPosition"
+			],
+			[
+				"im",
+				"img"
+			],
+			[
+				"0xff",
+				"0xff0000"
+			],
+			[
+				"plan",
+				"plantDae"
+			]
+		]
+	},
+	"buffers":
+	[
+	],
+	"build_system": "",
+	"command_palette":
+	{
+		"height": 392.0,
+		"selected_items":
+		[
+			[
+				"Pac",
+				"Preferences: Browse Packages"
+			],
+			[
+				"CON",
+				"Indentation: Convert to Tabs"
+			]
+		],
+		"width": 575.0
+	},
+	"console":
+	{
+		"height": 125.0
+	},
+	"distraction_free":
+	{
+		"menu_visible": true,
+		"show_minimap": false,
+		"show_open_files": false,
+		"show_tabs": false,
+		"side_bar_visible": false,
+		"status_bar_visible": false
+	},
+	"file_history":
+	[
+		"/C/Users/LIPE/Documents/GitHub/createjs/index.html",
+		"/C/Users/LIPE/Documents/GitHub/createjs/tweens",
+		"/C/Users/LIPE/Documents/GitHub/createjs/motion",
+		"/C/Users/LIPE/Documents/GitHub/createjs/bitmapAnimation",
+		"/C/Users/LIPE/Documents/GitHub/createjs/scripts/styles.css",
+		"/C/Users/LIPE/Documents/GitHub/createjs/styles/styles.css",
+		"/C/Users/LIPE/Documents/GitHub/createjs/drag&drop.html",
+		"/C/Users/LIPE/Documents/GitHub/createjs/assets/demoStyles.css",
+		"/C/Users/LIPE/Documents/GitHub/threejs/js/templates/HomeView.html",
+		"/C/Users/LIPE/Documents/GitHub/threejs/index.html",
+		"/C/Users/LIPE/Documents/GitHub/threejs/js/libs/ReusableRay.js",
+		"/C/Users/LIPE/Documents/GitHub/threejs/js/libs/TrackballControls.js",
+		"/C/Users/LIPE/Documents/GitHub/threejs/js/views/home.js",
+		"/C/Users/LIPE/Documents/GitHub/threejs/js/libs/CustomKeyboardControls.js",
+		"/C/Users/LIPE/Documents/GitHub/threejs/model/Tree_Bamboo2.dae",
+		"/C/Users/LIPE/Documents/GitHub/threejs/model/sofa.dae",
+		"/C/Users/LIPE/Documents/GitHub/threejs/model/whiteChair.dae",
+		"/C/Users/LIPE/Documents/GitHub/threejs/model/table.dae",
+		"/C/Users/LIPE/Documents/GitHub/threejs/js/libs/THREEx.KeyboardState.js",
+		"/C/Users/LIPE/Documents/GitHub/threejs/js/libs/FirstPersonControls.js",
+		"/C/Users/LIPE/Documents/GitHub/threejs/model/shelf.dae",
+		"/C/Users/LIPE/Documents/GitHub/threejs/img/grass.jpg",
+		"/C/Users/LIPE/Documents/GitHub/threejs/model/receptiondesk_1.dae",
+		"/C/Users/LIPE/Documents/GitHub/threejs/js/templates/ThreeView.html",
+		"/C/Users/LIPE/AppData/Local/Temp/Rar$DR80.248/images/texture0.jpg",
+		"/C/Users/LIPE/AppData/Local/Temp/Rar$DR80.248/images/texture1.jpg",
+		"/C/Users/LIPE/AppData/Local/Temp/Rar$DR80.248/images/texture2.jpg",
+		"/C/Users/LIPE/AppData/Local/Temp/Rar$DR80.248/images/texture3.jpg",
+		"/C/Users/LIPE/AppData/Local/Temp/Rar$DR80.248/images/texture4.jpg",
+		"/C/Users/LIPE/AppData/Local/Temp/Rar$DR80.248/images/texture5.jpg",
+		"/C/Users/LIPE/Documents/GitHub/threejs/js/libs/ColladaLoader.js",
+		"/C/Users/LIPE/Documents/GitHub/threejs/js/main.js",
+		"/C/Users/LIPE/Documents/GitHub/threejs/js/libs/three.js",
+		"/C/Users/LIPE/Documents/GitHub/threejs/model/monster.dae",
+		"/C/Users/LIPE/Documents/GitHub/threejs/js/views/three.js",
+		"/C/Users/LIPE/Documents/GitHub/threejs/model/tetera_texturada.dae",
+		"/Users/albertoperez/Library/Application Support/Sublime Text 2/Packages/User/Preferences.sublime-settings",
+		"/desarrollo/repositoriosGitHub/threejs/threejs.sublime-project",
+		"/desarrollo/proyectos/chatNode/gist2031681-8e24cafbf407799dad385cebb6fe22107c04ef0d/var s:Number = 0;"
+	],
+	"find":
+	{
+		"height": 34.0
+	},
+	"find_in_files":
+	{
+		"height": 0.0,
+		"where_history":
+		[
+		]
+	},
+	"find_state":
+	{
+		"case_sensitive": false,
+		"find_history":
+		[
+			"db",
+			"[];",
+			"touchstart",
+			"1",
+			"		\n",
+			"180",
+			"		        \n",
+			"objects",
+			"mousemove",
+			"/*\n			Init Scene\n				\n				@return\n		*/",
+			"			\n",
+			"skin",
+			";\n",
+			"dae",
+			"loader",
+			"camera",
+			"particleLight",
+			"texture2",
+			"30",
+			"stat"
+		],
+		"highlight": true,
+		"in_selection": false,
+		"preserve_case": false,
+		"regex": false,
+		"replace_history":
+		[
+		],
+		"reverse": false,
+		"show_context": true,
+		"use_buffer2": true,
+		"whole_word": false,
+		"wrap": true
+	},
+	"groups":
+	[
+		{
+			"sheets":
+			[
+			]
+		}
+	],
+	"incremental_find":
+	{
+		"height": 0.0
+	},
+	"input":
+	{
+		"height": 31.0
+	},
+	"layout":
+	{
+		"cells":
+		[
+			[
+				0,
+				0,
+				1,
+				1
+			]
+		],
+		"cols":
+		[
+			0.0,
+			1.0
+		],
+		"rows":
+		[
+			0.0,
+			1.0
+		]
+	},
+	"menu_visible": true,
+	"replace":
+	{
+		"height": 62.0
+	},
+	"save_all_on_build": true,
+	"select_file":
+	{
+		"height": 0.0,
+		"selected_items":
+		[
+		],
+		"width": 0.0
+	},
+	"select_project":
+	{
+		"height": 500.0,
+		"selected_items":
+		[
+		],
+		"width": 380.0
+	},
+	"show_minimap": true,
+	"show_open_files": true,
+	"show_tabs": true,
+	"side_bar_visible": true,
+	"side_bar_width": 232.0,
+	"status_bar_visible": true
+}
