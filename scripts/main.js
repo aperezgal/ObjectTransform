@@ -9,16 +9,21 @@
 
 //init Controls to an image
 
-var controls;
+var controls, controls2;
 
-controls = new OBJECT_TRANSFORM.ObjectTransform(document.getElementById( 'banner' ),
-    document.getElementById( 'mainContainer' ));
-controls.widthObj = 992;
-controls.heightObj = 486;
-controls.imageWidth = 150;
-controls.imageHeight = 250;
-controls.xPos = 300;
-controls.yPos = 100;
-controls.imageSource = "assets/banner1.jpg";
-controls.initialize();
 
+
+
+
+	window.onload = function(){
+		
+
+
+		controls = new OBJECT_TRANSFORM.ObjectTransform(document.getElementById( 'imgContainer' ),
+    		document.getElementById( 'mainContainer' ));
+		controls.sourceImage = 'assets/banner1.jpg';
+		controls.points = [[175, 33], [336, 71], [335, 197], [175, 198]];
+		controls.showPoints = true;
+		controls.initialize();
+    
+}
