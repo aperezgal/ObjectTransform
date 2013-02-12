@@ -21,7 +21,7 @@ if( typeof OBJECT_TRANSFORM == 'undefined' ) {
 /* -------------------------------------------------------------------
 * constructor
 * ----------------------------------------------------------------- */
-OBJECT_TRANSFORM.ObjectTransform = function ( object, domElement, video) {
+OBJECT_TRANSFORM.ObjectTransform = function ( object, domElement, objectList) {
 
     this.object = object;
 
@@ -31,83 +31,31 @@ OBJECT_TRANSFORM.ObjectTransform = function ( object, domElement, video) {
         this.domElement.setAttribute( 'tabindex', -1 );
     }
 
-    this.video = video;
-
-    //listen Mouse Events
-   /* this.domElement.addEventListener( 'mousemove', bind( this, this.onMouseMove ), false );
-    this.domElement.addEventListener( 'mousedown', bind( this, this.onMouseDown ), false );
-    this.domElement.addEventListener( 'mouseup', bind( this, this.onMouseUp ), false );
-
-    function bind( scope, fn ) {
-
-        return function () {
-
-            fn.apply( scope, arguments );
-
-        };
-
-    };*/
-
-
+    this.objectList = objectList;
 };
 
 
 /* -------------------------------------------------------------------
 * prototypes
 * ----------------------------------------------------------------- */
-var proto = OBJECT_TRANSFORM.ObjectTransform.prototype;
+    var proto = OBJECT_TRANSFORM.ObjectTransform.prototype;
 
-proto.points = []; 
-proto.sourceElement = "";
-proto.object;
-proto.video;
-proto.dotElement;
-proto.typeElement = "image";
-proto.showPoints = false;
+    proto.object;
+    proto.objectList;
+    proto.dotElement;
+    proto.showPoints = false;
 
 
-    proto.onMouseDown = function ( event ) {
-
-        if ( this.domElement !== document ) {
-            this.domElement.focus();
-        }
-
-        event.preventDefault();
-        event.stopPropagation();
-
-        console.log('Mouse Down');
-
-    };
-
-    proto.onMouseUp = function ( event ) {
-        event.preventDefault();
-        event.stopPropagation();
-
-       
-
-    };
-
-    proto.onMouseMove = function ( event ) {
-        console.log('Mouse Move');
-       
-    };
-
-
-    proto.update = function( ) {
-        console.log('Update!!');
-    }
-
-    proto.check = function( ) {
-        console.log('Check!!');
-    }
-
-
+/* -------------------------------------------------------------------
+* functions
+* ----------------------------------------------------------------- */
 
 
     proto.initialize = function( ) {
         console.log('Initialize components properties!!');
 
-       
+        //get Canvas instance
+        var objectList = this.objectList;
 
         var canvas = this.object;
         var ctx = canvas.getContext('2d');
@@ -124,67 +72,95 @@ proto.showPoints = false;
 
 
         var op = null;
-        
+        var op2 = null;
         
         var dotWidth = this.domElement.clientWidth;
         var dotHeight = this.domElement.clientHeight;
-        var points = this.points;
 
-        if (this.typeElement == "image"){
-            var img = new Image();
-            img.src = this.sourceElement; 
 
-            img.onload = function() {
-                op = new html5jp.perspective(ctx1, img, null);
-                op.draw(points);
-                //prepare_lines(ctx2, points);
-                draw_canvas(ctx, ctx1, ctx2);
-            };
+        //create the elements
+        for( var i=0; i<this.objectList.length; i++ ) {
+            var elem = this.objectList[i];
+
+            if (elem.typeElement == "image"){
+                var img = new Image();
+                img.src = elem.sourceElement; 
+
+                (function(elemento) {
+                    img.onload = function() {
+                        elemento.op = new html5jp.perspective(ctx1, this, null);
+                        elemento.op.draw(elemento.points);
+                        //prepare_lines(ctx2, points);
+                        draw_canvas(ctx, ctx1, ctx2);
+                    };
+                })(elem);
+                
+            }
+
+            if (elem.typeElement == "video"){
+                var video = elem.object;
+
+                (function(elemento, videoPlay) {
+                    videoPlay.addEventListener("play", function() {
+                        timerCallback(videoPlay, ctx, ctx1, ctx2, elemento);
+                    }, false);
+                })(elem, video);
+
+               
+                video.play();
+            }
+
         }
-
-        if (this.typeElement == "video"){
-            var video = this.video;
-            video.setAttribute('scr', this.sourceElement);
-
-
-            var self = this;
-            video.addEventListener("play", function() {
-                timerCallback(video, ctx, ctx1, ctx2, points);
-            }, false);
-            video.play();
-        }
-
-
-
-
-  
 
         var drag = null;
+        var actualElement = "";
+
         if (this.showPoints == true){
             canvas.addEventListener("mousedown", function(event) {
                 event.preventDefault();
                 var p = get_mouse_position(event);
-                for( var i=0; i<4; i++ ) {
-                    var x = points[i][0];
-                    var y = points[i][1];
-                    if( p.x < x + 10 && p.x > x - 10 && p.y < y + 10 && p.y > y - 10 ) {
-                        drag = i;
-                        break;
+
+
+                //TODO: for element in elements
+                for( var j=0; j<objectList.length; j++ ) {
+                    for( var i=0; i<4; i++ ) {
+                        var x = objectList[j].points[i][0];
+                        var y = objectList[j].points[i][1];
+                        if( p.x < x + 10 && p.x > x - 10 && p.y < y + 10 && p.y > y - 10 ) {
+                            drag = i;
+                            actualElement = objectList[j].alias;
+                            console.log ("Mouse Down: " + actualElement);
+
+                            break;
+                        }
                     }
                 }
-               
             }, false);
+
+
 
             canvas.addEventListener("mousemove", function(event) {
                 event.preventDefault();
                 if(drag == null) { 
                     return; 
                 }
+
+                //TODO: get the element, and prepare to paint
+                var elem;
+                for( var i=0; i<objectList.length; i++ ) {
+                        if (objectList[i].alias == actualElement){
+                            elem = objectList[i];
+                            console.log ("Mouse Move elem: " + elem);
+                            break;
+                        }
+                }
+
                 var p = get_mouse_position(event);
-                points[drag][0] = p.x;
-                points[drag][1] = p.y;
-                prepare_lines(ctx2, points, true);
+                elem.points[drag][0] = p.x;
+                elem.points[drag][1] = p.y;
+                prepare_lines(ctx2, elem.points, true);
                 draw_canvas(ctx, ctx1, ctx2);
+                
             }, false);
 
             canvas.addEventListener("mouseup", function(event) {
@@ -192,18 +168,39 @@ proto.showPoints = false;
                 if(drag == null) { 
                     return; 
                 }
+
+                var elem;
+                for( var i=0; i<objectList.length; i++ ) {
+                        if (objectList[i].alias == actualElement){
+                            elem = objectList[i];
+                             console.log ("Mouse Up elem: " + elem);
+                            break; 
+                        }
+                }
+
+                //TODO: get the element, and prepare to paint
+               
                 var p = get_mouse_position(event);
-                points[drag][0] = p.x;
-                points[drag][1] = p.y;
+                elem.points[drag][0] = p.x;
+                elem.points[drag][1] = p.y;
                 ctx.clearRect(0, 0, canvas.width, canvas.height);
                 ctx1.clearRect(0, 0, canvas.width, canvas.height);
-                var s = (new Date()).getTime();
-                op.draw(points);
-                //document.getElementById("ms").innerHTML = ( (new Date()).getTime() - s );
-                prepare_lines(ctx2, points);
+              
+                
+
+                //TODO : for every point
+                for( var i=0; i<objectList.length; i++ ) {
+                    objectList[i].op.draw(objectList[i].points);
+                }
+                
+                
+                prepare_lines(ctx2, elem.points);
+               
+
                 draw_canvas(ctx, ctx1, ctx2);
                 drag = null;
             }, false);
+
 
 
             canvas.addEventListener("mouseout", function(event) {
@@ -220,29 +217,36 @@ proto.showPoints = false;
             canvas.addEventListener("dblclick", function(event) {
                 event.preventDefault();
                 
-                console.log(points);
+                var elem;
+                for( var i=0; i<objectList.length; i++ ) {
+                        if (objectList[i].alias == actualElement){
+                            elem = objectList[i];
+                             console.log (elem);
+                             break;
+                        }
+                }
             }, false);
         }
         
 
-        function timerCallback(video, ctx, ctx1, ctx2, points) {
+        function timerCallback(video, ctx, ctx1, ctx2, element) {
           if (video.paused ||video.ended) {
             return;
           }
           if ( video.readyState === video.HAVE_ENOUGH_DATA ) {
-            computeFrame(video, ctx, ctx1, ctx2, points);
+            computeFrame(video, ctx, ctx1, ctx2, element);
           }
           var self = this;
           setTimeout(function () {
-              timerCallback(video, ctx, ctx1, ctx2, points);
+              timerCallback(video, ctx, ctx1, ctx2, element);
             }, 0);
         }
 
 
-        function computeFrame(video, ctx, ctx1, ctx2, points) {
+        function computeFrame(video, ctx, ctx1, ctx2, element) {
 
-            op = new html5jp.perspective(ctx1, null, video);
-            op.draw(points);
+            element.op = new html5jp.perspective(ctx1, null, video);
+            element.op.draw(element.points);
             //prepare_lines(ctx2, points);
             draw_canvas(ctx, ctx1, ctx2);
 
