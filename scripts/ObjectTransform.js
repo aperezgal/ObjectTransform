@@ -156,6 +156,7 @@ proto.showPoints = false;
 
 
 
+
         var lastX=canvas.width/2, lastY=canvas.height/2;
         var dragStart,dragged;
 

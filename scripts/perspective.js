@@ -42,9 +42,9 @@ html5jp.perspective = function(ctxd, image, video) {
 		if( ! video || ! video.width || ! video.height ) { return; }
 		widthElement = video.width;
 		heightElement = video.height;
-		console.log("habemus tamaño");
 		image = video;
 	}
+
 	
 	// prepare a <canvas> for the image
 	var cvso = document.createElement('canvas');
