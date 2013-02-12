@@ -20,10 +20,13 @@ var controls, controls2;
 
 
 		controls = new OBJECT_TRANSFORM.ObjectTransform(document.getElementById( 'imgContainer' ),
-    		document.getElementById( 'mainContainer' ));
-		controls.sourceImage = 'assets/banner1.jpg';
+    		document.getElementById( 'mainContainer' ), document.getElementById( 'video1' ));
+		//controls.sourceElement = 'assets/banner1.jpg';
+		controls.sourceElement = 'assets/video1.mp4';
 		controls.points = [[175, 33], [336, 71], [335, 197], [175, 198]];
-		controls.showPoints = true;
+		controls.showPoints = false;
+		controls.typeElement = "video"; //image
+		//controls.typeElement = "image";
 		controls.initialize();
     
 }

@@ -21,7 +21,7 @@ if( typeof OBJECT_TRANSFORM == 'undefined' ) {
 /* -------------------------------------------------------------------
 * constructor
 * ----------------------------------------------------------------- */
-OBJECT_TRANSFORM.ObjectTransform = function ( object, domElement ) {
+OBJECT_TRANSFORM.ObjectTransform = function ( object, domElement, video) {
 
     this.object = object;
 
@@ -31,7 +31,7 @@ OBJECT_TRANSFORM.ObjectTransform = function ( object, domElement ) {
         this.domElement.setAttribute( 'tabindex', -1 );
     }
 
-
+    this.video = video;
 
     //listen Mouse Events
    /* this.domElement.addEventListener( 'mousemove', bind( this, this.onMouseMove ), false );
@@ -58,9 +58,11 @@ OBJECT_TRANSFORM.ObjectTransform = function ( object, domElement ) {
 var proto = OBJECT_TRANSFORM.ObjectTransform.prototype;
 
 proto.points = []; 
-proto.sourceImage = "";
+proto.sourceElement = "";
 proto.object;
+proto.video;
 proto.dotElement;
+proto.typeElement = "image";
 proto.showPoints = false;
 
 
@@ -99,6 +101,9 @@ proto.showPoints = false;
         console.log('Check!!');
     }
 
+
+
+
     proto.initialize = function( ) {
         console.log('Initialize components properties!!');
 
@@ -120,22 +125,34 @@ proto.showPoints = false;
 
         var op = null;
         
-        // img要素
-        var img = new Image();
-        img.src = this.sourceImage; 
-
-
-        var points = this.points;
-
+        
         var dotWidth = this.domElement.clientWidth;
         var dotHeight = this.domElement.clientHeight;
+        var points = this.points;
 
-        img.onload = function() {
-            op = new html5jp.perspective(ctx1, img);
-            op.draw(points);
-            //prepare_lines(ctx2, points);
-            draw_canvas(ctx, ctx1, ctx2);
-        };
+        if (this.typeElement == "image"){
+            var img = new Image();
+            img.src = this.sourceElement; 
+
+            img.onload = function() {
+                op = new html5jp.perspective(ctx1, img, null);
+                op.draw(points);
+                //prepare_lines(ctx2, points);
+                draw_canvas(ctx, ctx1, ctx2);
+            };
+        }
+
+        if (this.typeElement == "video"){
+            var video = this.video;
+            video.setAttribute('scr', this.sourceElement);
+
+
+            var self = this;
+            video.addEventListener("play", function() {
+                timerCallback(video, ctx, ctx1, ctx2, points);
+            }, false);
+            video.play();
+        }
 
 
 
@@ -208,6 +225,29 @@ proto.showPoints = false;
         }
         
 
+        function timerCallback(video, ctx, ctx1, ctx2, points) {
+          if (video.paused ||video.ended) {
+            return;
+          }
+          if ( video.readyState === video.HAVE_ENOUGH_DATA ) {
+            computeFrame(video, ctx, ctx1, ctx2, points);
+          }
+          var self = this;
+          setTimeout(function () {
+              timerCallback(video, ctx, ctx1, ctx2, points);
+            }, 0);
+        }
+
+
+        function computeFrame(video, ctx, ctx1, ctx2, points) {
+
+            op = new html5jp.perspective(ctx1, null, video);
+            op.draw(points);
+            //prepare_lines(ctx2, points);
+            draw_canvas(ctx, ctx1, ctx2);
+
+            
+          }
 
 
         function prepare_lines(ctx, p, with_line) {

@@ -27,14 +27,29 @@ if( typeof html5jp == 'undefined' ) {
 /* -------------------------------------------------------------------
 * constructor
 * ----------------------------------------------------------------- */
-html5jp.perspective = function(ctxd, image) {
+html5jp.perspective = function(ctxd, image, video) {
 	// check the arguments
 	if( ! ctxd || ! ctxd.strokeStyle ) { return; }
-	if( ! image || ! image.width || ! image.height ) { return; }
+
+	var widthElement, heightElement;
+
+	if (image){
+		if( ! image || ! image.width || ! image.height ) { return; }
+		widthElement = image.width;
+		heightElement = image.height;
+	}
+	if (video){
+		if( ! video || ! video.width || ! video.height ) { return; }
+		widthElement = video.width;
+		heightElement = video.height;
+		console.log("habemus tamaño");
+		image = video;
+	}
+	
 	// prepare a <canvas> for the image
 	var cvso = document.createElement('canvas');
-	cvso.width = parseInt(image.width);
-	cvso.height = parseInt(image.height);
+	cvso.width = parseInt(widthElement);
+	cvso.height = parseInt(heightElement);
 	var ctxo = cvso.getContext('2d');
 	ctxo.drawImage(image, 0, 0, cvso.width, cvso.height);
 	// prepare a <canvas> for the transformed image
@@ -76,83 +91,87 @@ proto.draw = function(points) {
 		Math.sqrt( Math.pow(d3x-d0x, 2) + Math.pow(d3y-d0y, 2) )  // left side
 	];
 	//
-	var ow = this.p.cvso.width;
-	var oh = this.p.cvso.height;
-	// specify the index of which dimension is longest
-	var base_index = 0;
-	var max_scale_rate = 0;
-	var zero_num = 0;
-	for( var i=0; i<4; i++ ) {
-		var rate = 0;
-		if( i % 2 ) {
-			rate = dims[i] / ow;
-		} else {
-			rate = dims[i] / oh;
+
+	if (this.p){
+		var ow = this.p.cvso.width;
+		var oh = this.p.cvso.height;
+		// specify the index of which dimension is longest
+		var base_index = 0;
+		var max_scale_rate = 0;
+		var zero_num = 0;
+		for( var i=0; i<4; i++ ) {
+			var rate = 0;
+			if( i % 2 ) {
+				rate = dims[i] / ow;
+			} else {
+				rate = dims[i] / oh;
+			}
+			if( rate > max_scale_rate ) {
+				base_index = i;
+				max_scale_rate = rate;
+			}
+			if( dims[i] == 0 ) {
+				zero_num ++;
+			}
 		}
-		if( rate > max_scale_rate ) {
-			base_index = i;
-			max_scale_rate = rate;
+		if(zero_num > 1) { return; }
+		//
+		var step = 2;
+		var cover_step = step * 5;
+		//
+		var ctxo = this.p.ctxo;
+		var ctxt = this.p.ctxt;
+		ctxt.clearRect(0, 0, ctxt.canvas.width, ctxt.canvas.height);
+		if(base_index % 2 == 0) { // top or bottom side
+			var ctxl = this.create_canvas_context(ow, cover_step);
+			var cvsl = ctxl.canvas;
+			for( var y=0; y<oh; y+=step ) {
+				var r = y / oh;
+				var sx = d0x + (d3x-d0x) * r;
+				var sy = d0y + (d3y-d0y) * r;
+				var ex = d1x + (d2x-d1x) * r;
+				var ey = d1y + (d2y-d1y) * r;
+				var ag = Math.atan( (ey-sy) / (ex-sx) );
+				var sc = Math.sqrt( Math.pow(ex-sx, 2) + Math.pow(ey-sy, 2) ) / ow;
+				ctxl.setTransform(1, 0, 0, 1, 0, -y);
+				ctxl.drawImage(ctxo.canvas, 0, 0);
+				//
+				ctxt.translate(sx, sy);
+				ctxt.rotate(ag);
+				ctxt.scale(sc, sc);
+				ctxt.drawImage(cvsl, 0, 0);
+				//
+				ctxt.setTransform(1, 0, 0, 1, 0, 0);
+			}
+		} else if(base_index % 2 == 1) { // right or left side
+			var ctxl = this.create_canvas_context(cover_step, oh);
+			var cvsl = ctxl.canvas;
+			for( var x=0; x<ow; x+=step ) {
+				var r =  x / ow;
+				var sx = d0x + (d1x-d0x) * r;
+				var sy = d0y + (d1y-d0y) * r;
+				var ex = d3x + (d2x-d3x) * r;
+				var ey = d3y + (d2y-d3y) * r;
+				var ag = Math.atan( (sx-ex) / (ey-sy) );
+				var sc = Math.sqrt( Math.pow(ex-sx, 2) + Math.pow(ey-sy, 2) ) / oh;
+				ctxl.setTransform(1, 0, 0, 1, -x, 0);
+				ctxl.drawImage(ctxo.canvas, 0, 0);
+				//
+				ctxt.translate(sx, sy);
+				ctxt.rotate(ag);
+				ctxt.scale(sc, sc);
+				ctxt.drawImage(cvsl, 0, 0);
+				//
+				ctxt.setTransform(1, 0, 0, 1, 0, 0);
+			}
 		}
-		if( dims[i] == 0 ) {
-			zero_num ++;
-		}
+		// set a clipping path and draw the transformed image on the destination canvas.
+		this.p.ctxd.save();
+		this.set_clipping_path(this.p.ctxd, [[d0x, d0y], [d1x, d1y], [d2x, d2y], [d3x, d3y]]);
+		this.p.ctxd.drawImage(ctxt.canvas, 0, 0);
+		this.p.ctxd.restore();
+
 	}
-	if(zero_num > 1) { return; }
-	//
-	var step = 2;
-	var cover_step = step * 5;
-	//
-	var ctxo = this.p.ctxo;
-	var ctxt = this.p.ctxt;
-	ctxt.clearRect(0, 0, ctxt.canvas.width, ctxt.canvas.height);
-	if(base_index % 2 == 0) { // top or bottom side
-		var ctxl = this.create_canvas_context(ow, cover_step);
-		var cvsl = ctxl.canvas;
-		for( var y=0; y<oh; y+=step ) {
-			var r = y / oh;
-			var sx = d0x + (d3x-d0x) * r;
-			var sy = d0y + (d3y-d0y) * r;
-			var ex = d1x + (d2x-d1x) * r;
-			var ey = d1y + (d2y-d1y) * r;
-			var ag = Math.atan( (ey-sy) / (ex-sx) );
-			var sc = Math.sqrt( Math.pow(ex-sx, 2) + Math.pow(ey-sy, 2) ) / ow;
-			ctxl.setTransform(1, 0, 0, 1, 0, -y);
-			ctxl.drawImage(ctxo.canvas, 0, 0);
-			//
-			ctxt.translate(sx, sy);
-			ctxt.rotate(ag);
-			ctxt.scale(sc, sc);
-			ctxt.drawImage(cvsl, 0, 0);
-			//
-			ctxt.setTransform(1, 0, 0, 1, 0, 0);
-		}
-	} else if(base_index % 2 == 1) { // right or left side
-		var ctxl = this.create_canvas_context(cover_step, oh);
-		var cvsl = ctxl.canvas;
-		for( var x=0; x<ow; x+=step ) {
-			var r =  x / ow;
-			var sx = d0x + (d1x-d0x) * r;
-			var sy = d0y + (d1y-d0y) * r;
-			var ex = d3x + (d2x-d3x) * r;
-			var ey = d3y + (d2y-d3y) * r;
-			var ag = Math.atan( (sx-ex) / (ey-sy) );
-			var sc = Math.sqrt( Math.pow(ex-sx, 2) + Math.pow(ey-sy, 2) ) / oh;
-			ctxl.setTransform(1, 0, 0, 1, -x, 0);
-			ctxl.drawImage(ctxo.canvas, 0, 0);
-			//
-			ctxt.translate(sx, sy);
-			ctxt.rotate(ag);
-			ctxt.scale(sc, sc);
-			ctxt.drawImage(cvsl, 0, 0);
-			//
-			ctxt.setTransform(1, 0, 0, 1, 0, 0);
-		}
-	}
-	// set a clipping path and draw the transformed image on the destination canvas.
-	this.p.ctxd.save();
-	this.set_clipping_path(this.p.ctxd, [[d0x, d0y], [d1x, d1y], [d2x, d2y], [d3x, d3y]]);
-	this.p.ctxd.drawImage(ctxt.canvas, 0, 0);
-	this.p.ctxd.restore();
 }
 
 /* -------------------------------------------------------------------
