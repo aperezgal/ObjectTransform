@@ -157,8 +157,7 @@ proto.showPoints = false;
 
 
 
-        var lastX=canvas.width/2, lastY=canvas.height/2;
-        var dragStart,dragged;
+  
 
         var drag = null;
         if (this.showPoints == true){
@@ -272,10 +271,12 @@ proto.showPoints = false;
                 ctx.beginPath();
                 ctx.arc(p[i][0], p[i][1], 8, 0, Math.PI*2, true);
                 ctx.fill();
+               
             }
             //
             ctx.restore();
         }
+
 
         function draw_canvas(ctx, ctx1, ctx2) {
             ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
